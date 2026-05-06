@@ -1,45 +1,179 @@
 /**
- * 运营工具箱网页模板 - 脚本文件
- * 版本: 1.0
- * 描述: 处理所有前端交互逻辑，按钮点击统一弹窗提示"功能待后端实现"
+ * 运营工具箱网页模板 - 交互脚本
+ * 版本: 3.0 (亮蓝强调风格)
+ * 描述: 用户登录系统 + 前端交互逻辑
  */
 
 // ==================== 常量定义 ====================
-const ALERT_MESSAGE = '功能待后端实现';
+const ALERT_MESSAGE = '该功能将在后端集成后实现。';
+const STORAGE_KEY_USER = 'operator_toolkit_user';
 
 // ==================== DOM 加载完成后初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
-    initButtonHandlers();      // 按钮点击事件
-    initUploadZones();         // 上传区域交互
-    initPositionSelector();    // 水印位置选择器
-    initTeleprompter();        // 题词器控制
-    initSceneCount();          // 分镜数量滑块
-    initColorPicker();         // 题词器背景色选择
+    initAuth();          // 初始化认证状态
+    initButtonHandlers(); // 按钮点击事件
+    initUploadZones();   // 上传区域交互
+    initNavSidebar();    // 侧边导航切换
+    initTeleprompter();  // 题词器控制
+    initSceneCount();    // 分镜数量滑块
+    initColorPicker();   // 背景色选择
 });
+
+// ==================== 用户认证系统 ====================
+/**
+ * 初始化认证状态
+ */
+function initAuth() {
+    const storedUser = localStorage.getItem(STORAGE_KEY_USER);
+
+    if (storedUser) {
+        showMainPage(JSON.parse(storedUser));
+    } else {
+        showLoginPage();
+    }
+
+    // 登录表单提交
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+
+    // 退出按钮
+    const logoutBtn = document.getElementById('btn-logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+}
+
+/**
+ * 处理登录
+ * @param {Event} e 提交事件
+ */
+function handleLogin(e) {
+    e.preventDefault();
+
+    const account = document.getElementById('login-account').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+
+    if (!account || !password) {
+        alert('请输入账号和密码');
+        return;
+    }
+
+    // 简单验证（实际项目中应调用后端API）
+    // 默认账号: admin, 密码: admin
+    if (account === 'admin' && password === 'admin') {
+        const userData = {
+            account: account,
+            username: account,
+            loginTime: new Date().toISOString()
+        };
+
+        // 保存到 localStorage（永久存储）
+        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userData));
+
+        showMainPage(userData);
+    } else {
+        alert('账号或密码错误');
+    }
+}
+
+/**
+ * 处理退出登录
+ */
+function handleLogout() {
+    localStorage.removeItem(STORAGE_KEY_USER);
+    showLoginPage();
+}
+
+/**
+ * 显示登录页面
+ */
+function showLoginPage() {
+    document.getElementById('login-page').style.display = 'flex';
+    document.getElementById('main-page').style.display = 'none';
+
+    // 清空登录表单
+    document.getElementById('login-account').value = '';
+    document.getElementById('login-password').value = '';
+}
+
+/**
+ * 显示主页面
+ * @param {Object} userData 用户数据
+ */
+function showMainPage(userData) {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('main-page').style.display = 'block';
+
+    // 更新用户显示
+    document.getElementById('display-username').textContent = userData.username;
+
+    // 默认显示第一个模块
+    showSection('review');
+}
+
+// ==================== 侧边导航切换 ====================
+/**
+ * 初始化侧边导航
+ */
+function initNavSidebar() {
+    const navItems = document.querySelectorAll('.nav-item');
+
+    navItems.forEach((item) => {
+        item.addEventListener('click', () => {
+            const section = item.dataset.section;
+            if (section) {
+                showSection(section);
+            }
+        });
+    });
+}
+
+/**
+ * 显示指定模块
+ * @param {string} sectionId 模块ID
+ */
+function showSection(sectionId) {
+    // 更新导航项激活状态
+    document.querySelectorAll('.nav-item').forEach((item) => {
+        item.classList.toggle('active', item.dataset.section === sectionId);
+    });
+
+    // 更新模块显示
+    document.querySelectorAll('.module-section').forEach((section) => {
+        section.classList.toggle('active', section.id === `section-${sectionId}`);
+    });
+
+    // 更新页面标题
+    const activeSection = document.getElementById(`section-${sectionId}`);
+    if (activeSection) {
+        const title = activeSection.dataset.title;
+        document.getElementById('current-page-title').textContent = title || '';
+    }
+}
 
 // ==================== 按钮点击事件处理 ====================
 /**
  * 为所有带 data-action 属性的按钮添加点击事件
- * 点击后统一弹出提示：功能待后端实现
  */
 function initButtonHandlers() {
-    // 使用事件委托处理所有按钮点击
     document.addEventListener('click', (e) => {
         const button = e.target.closest('[data-action]');
         if (!button) return;
 
         e.preventDefault();
+        e.stopPropagation();
+
         alert(ALERT_MESSAGE);
     });
 }
 
 // ==================== 上传区域交互 ====================
 /**
- * 初始化上传区域的拖拽和点击上传功能
- * 支持图片和视频上传，仅本地预览，不实际上传
+ * 初始化上传区域
  */
 function initUploadZones() {
-    // 获取所有上传区域
     const uploadZones = document.querySelectorAll('.upload-zone');
 
     uploadZones.forEach((zone) => {
@@ -47,11 +181,11 @@ function initUploadZones() {
         const placeholder = zone.querySelector('.upload-placeholder');
         const preview = zone.querySelector('.upload-preview');
         const removeBtn = zone.querySelector('.btn-remove');
-        const isVideoUpload = zone.classList.contains('video-upload');
+        const isVideoUpload = zone.closest('.module-section')?.querySelector('video');
 
         if (!fileInput) return;
 
-        // 点击上传区域触发文件选择
+        // 点击触发文件选择
         zone.addEventListener('click', (e) => {
             if (e.target.closest('.btn-remove')) return;
             fileInput.click();
@@ -59,10 +193,10 @@ function initUploadZones() {
 
         // 文件选择处理
         fileInput.addEventListener('change', () => {
-            handleFileSelect(fileInput.files[0], zone, isVideoUpload);
+            handleFileSelect(fileInput.files[0], zone);
         });
 
-        // 拖拽悬停效果
+        // 拖拽效果
         zone.addEventListener('dragover', (e) => {
             e.preventDefault();
             zone.classList.add('dragover');
@@ -72,13 +206,12 @@ function initUploadZones() {
             zone.classList.remove('dragover');
         });
 
-        // 拖拽放下处理
         zone.addEventListener('drop', (e) => {
             e.preventDefault();
             zone.classList.remove('dragover');
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                handleFileSelect(files[0], zone, isVideoUpload);
+                handleFileSelect(files[0], zone);
             }
         });
 
@@ -86,84 +219,96 @@ function initUploadZones() {
         if (removeBtn) {
             removeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                resetUploadZone(zone, isVideoUpload);
+                resetUploadZone(zone);
             });
         }
     });
 }
 
 /**
- * 处理选中的文件
- * @param {File} file - 选中的文件
- * @param {HTMLElement} zone - 上传区域元素
- * @param {boolean} isVideo - 是否为视频上传
+ * 处理文件选择
+ * @param {File} file 文件对象
+ * @param {HTMLElement} zone 上传区域
  */
-function handleFileSelect(file, zone, isVideo) {
+function handleFileSelect(file, zone) {
     if (!file) return;
 
     const placeholder = zone.querySelector('.upload-placeholder');
     const preview = zone.querySelector('.upload-preview');
     const fileNameSpan = zone.querySelector('.upload-file-name');
+    const previewImg = zone.querySelector('img');
+    const moduleSection = zone.closest('.module-section');
 
-    if (isVideo) {
-        const video = zone.querySelector('video');
-        if (video) {
+    // 检查是否为视频上传
+    const videoPreview = moduleSection?.querySelector('video');
+    const watermarkPreview = document.getElementById('watermark-preview-video');
+    const extractPreview = document.getElementById('extract-preview-video');
+
+    if (videoPreview || watermarkPreview || extractPreview) {
+        const videoEl = videoPreview || watermarkPreview || extractPreview;
+        const previewZone = document.getElementById(`${zone.id.replace('-upload-zone', '')}-preview-zone`);
+
+        if (videoEl && previewZone) {
             const url = URL.createObjectURL(file);
-            video.src = url;
-            video.onloadedmetadata = () => {
-                // 更新视频信息
-                updateVideoInfo(video);
+            videoEl.src = url;
+            videoEl.style.display = 'block';
+            previewZone.querySelector('.preview-empty')?.remove();
+
+            videoEl.onloadedmetadata = () => {
+                updateVideoInfo(videoEl, moduleSection);
             };
         }
-    } else {
-        const img = zone.querySelector('img');
-        if (img) {
-            const url = URL.createObjectURL(file);
-            img.src = url;
+
+        if (fileNameSpan) {
+            fileNameSpan.textContent = file.name;
         }
+    } else if (previewImg) {
+        // 图片预览
+        const url = URL.createObjectURL(file);
+        previewImg.src = url;
     }
 
-    if (fileNameSpan) {
-        fileNameSpan.textContent = file.name;
-    }
-
-    // 显示预览，隐藏占位符
     if (placeholder) placeholder.style.display = 'none';
     if (preview) preview.style.display = 'flex';
 }
 
 /**
  * 重置上传区域
- * @param {HTMLElement} zone - 上传区域元素
- * @param {boolean} isVideo - 是否为视频上传
+ * @param {HTMLElement} zone 上传区域
  */
-function resetUploadZone(zone, isVideo) {
+function resetUploadZone(zone) {
     const placeholder = zone.querySelector('.upload-placeholder');
     const preview = zone.querySelector('.upload-preview');
     const fileInput = zone.querySelector('input[type="file"]');
-    const videoInfo = zone.closest('.module-body')?.querySelector('.video-info');
+    const moduleSection = zone.closest('.module-section');
 
     if (placeholder) placeholder.style.display = 'flex';
     if (preview) preview.style.display = 'none';
-
     if (fileInput) fileInput.value = '';
 
-    if (isVideo && videoInfo) {
-        videoInfo.style.display = 'none';
+    // 重置视频预览
+    const videoPreview = moduleSection?.querySelector('video');
+    if (videoPreview) {
+        videoPreview.src = '';
+        videoPreview.style.display = 'none';
     }
+
+    // 隐藏视频信息
+    const videoInfo = moduleSection?.querySelector('.video-info');
+    if (videoInfo) videoInfo.style.display = 'none';
 }
 
 /**
- * 更新视频信息显示
- * @param {HTMLVideoElement} video - 视频元素
+ * 更新视频信息
+ * @param {HTMLVideoElement} video 视频元素
+ * @param {HTMLElement} moduleSection 模块区域
  */
-function updateVideoInfo(video) {
-    const moduleBody = video.closest('.module-body');
-    if (!moduleBody) return;
+function updateVideoInfo(video, moduleSection) {
+    if (!moduleSection) return;
 
-    const videoInfo = moduleBody.querySelector('.video-info');
-    const durationEl = moduleBody.querySelector('#video-duration');
-    const resolutionEl = moduleBody.querySelector('#video-resolution');
+    const videoInfo = moduleSection.querySelector('.video-info');
+    const durationEl = moduleSection.querySelector('#video-duration');
+    const resolutionEl = moduleSection.querySelector('#video-resolution');
 
     if (videoInfo) videoInfo.style.display = 'flex';
 
@@ -179,49 +324,20 @@ function updateVideoInfo(video) {
     }
 }
 
-// ==================== 水印位置选择器 ====================
-/**
- * 初始化水印位置选择器
- * 支持预设位置和自定义坐标
- */
-function initPositionSelector() {
-    const positionBtns = document.querySelectorAll('.position-btn');
-
-    positionBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            // 移除所有 active 状态
-            positionBtns.forEach((b) => b.classList.remove('active'));
-            // 添加 active 状态到当前按钮
-            btn.classList.add('active');
-
-            // 获取模块body
-            const moduleBody = btn.closest('.module-body');
-            if (!moduleBody) return;
-
-            // 显示/隐藏自定义坐标区域
-            const customCoords = moduleBody.querySelector('.custom-coords');
-            if (customCoords) {
-                if (btn.dataset.position === 'custom') {
-                    customCoords.style.display = 'block';
-                } else {
-                    customCoords.style.display = 'none';
-                }
-            }
-        });
-    });
-}
-
 // ==================== 题词器控制 ====================
 /**
- * 初始化题词器交互控制
- * 包括播放/暂停、重置、全屏、字体大小、滚动速度
+ * 初始化题词器
  */
 function initTeleprompter() {
-    // 字体大小控制
     const fontSizeControl = document.getElementById('font-size-control');
-    const fontSizeValue = fontSizeControl?.parentElement.querySelector('.range-value');
+    const fontSizeValue = document.getElementById('font-size-value');
+    const speedControl = document.getElementById('speed-control');
+    const speedValue = document.getElementById('speed-value');
     const teleprompterText = document.querySelector('.teleprompter-text');
+    const teleprompterZone = document.querySelector('.teleprompter-zone');
+    const scriptInput = document.getElementById('teleprompter-script');
 
+    // 字体大小控制
     if (fontSizeControl && fontSizeValue && teleprompterText) {
         fontSizeControl.addEventListener('input', () => {
             const size = fontSizeControl.value;
@@ -231,88 +347,86 @@ function initTeleprompter() {
     }
 
     // 滚动速度控制
-    const speedControl = document.getElementById('speed-control');
-    const speedValue = speedControl?.parentElement.querySelector('.range-value');
-
     if (speedControl && speedValue && teleprompterText) {
         speedControl.addEventListener('input', () => {
             const speed = speedControl.value;
             speedValue.textContent = speed;
-            // 根据速度调整动画时长（速度越大，时长越短）
             const duration = 20 - (speed - 1) * 1.8;
             teleprompterText.style.animationDuration = `${duration}s`;
         });
     }
 
-    // 题词预览区
-    const teleprompterPreview = document.querySelector('.teleprompter-preview');
-    const scriptInput = document.getElementById('teleprompter-script');
-
-    // 脚本输入时更新预览
+    // 脚本输入更新预览
     if (scriptInput && teleprompterText) {
         scriptInput.addEventListener('input', () => {
             teleprompterText.textContent = scriptInput.value || '提词内容将在此滚动显示';
         });
     }
 
-    // 播放按钮
+    // 题词器控制按钮
     const playBtn = document.querySelector('[data-action="teleprompter-play"]');
-    if (playBtn && teleprompterPreview) {
+    const pauseBtn = document.querySelector('[data-action="teleprompter-pause"]');
+    const resetBtn = document.querySelector('[data-action="teleprompter-reset"]');
+    const fullscreenBtn = document.querySelector('[data-action="teleprompter-fullscreen"]');
+
+    if (playBtn && teleprompterZone && teleprompterText) {
         playBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            teleprompterPreview.classList.remove('paused');
-            alert(ALERT_MESSAGE);
+            teleprompterZone.classList.remove('paused');
+            teleprompterText.style.animation = 'none';
+            teleprompterText.offsetHeight;
+            teleprompterText.style.animation = `teleprompter-scroll ${getAnimationDuration()}s linear infinite`;
         });
     }
 
-    // 暂停按钮
-    const pauseBtn = document.querySelector('[data-action="teleprompter-pause"]');
-    if (pauseBtn && teleprompterPreview) {
+    if (pauseBtn && teleprompterZone) {
         pauseBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            teleprompterPreview.classList.add('paused');
-            alert(ALERT_MESSAGE);
+            teleprompterZone.classList.add('paused');
         });
     }
 
-    // 重置按钮
-    const resetBtn = document.querySelector('[data-action="teleprompter-reset"]');
-    if (resetBtn && teleprompterText) {
+    if (resetBtn && teleprompterText && teleprompterZone) {
         resetBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            // 重置动画
             teleprompterText.style.animation = 'none';
-            teleprompterText.offsetHeight; // 触发重排
-            teleprompterText.style.animation = 'teleprompter-scroll 10s linear infinite';
-            // 恢复播放状态
-            if (teleprompterPreview) {
-                teleprompterPreview.classList.remove('paused');
-            }
-            alert(ALERT_MESSAGE);
+            teleprompterText.offsetHeight;
+            teleprompterText.style.animation = 'teleprompter-scroll 15s linear infinite';
+            teleprompterZone.classList.remove('paused');
         });
     }
 
-    // 全屏按钮
-    const fullscreenBtn = document.querySelector('[data-action="teleprompter-fullscreen"]');
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (teleprompterPreview) {
-                if (teleprompterPreview.requestFullscreen) {
-                    teleprompterPreview.requestFullscreen();
-                } else if (teleprompterPreview.webkitRequestFullscreen) {
-                    teleprompterPreview.webkitRequestFullscreen();
+            const screen = document.getElementById('teleprompter-screen');
+            if (screen) {
+                if (screen.requestFullscreen) {
+                    screen.requestFullscreen();
+                } else if (screen.webkitRequestFullscreen) {
+                    screen.webkitRequestFullscreen();
                 }
             }
-            alert(ALERT_MESSAGE);
         });
     }
+}
+
+/**
+ * 获取动画时长
+ * @returns {number}
+ */
+function getAnimationDuration() {
+    const speedControl = document.getElementById('speed-control');
+    if (speedControl) {
+        const speed = parseInt(speedControl.value);
+        return 20 - (speed - 1) * 1.8;
+    }
+    return 15;
 }
 
 // ==================== 分镜数量滑块 ====================
 /**
  * 初始化分镜数量滑块
- * 实时显示当前选择的分镜数量
  */
 function initSceneCount() {
     const sceneCountInput = document.getElementById('scene-count');
@@ -325,9 +439,9 @@ function initSceneCount() {
     }
 }
 
-// ==================== 题词器背景色选择 ====================
+// ==================== 背景色选择 ====================
 /**
- * 初始化题词器背景色选择器
+ * 初始化颜色选择器
  */
 function initColorPicker() {
     const colorBtns = document.querySelectorAll('.color-btn');
@@ -336,52 +450,21 @@ function initColorPicker() {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
 
-            // 移除所有 active 状态
             colorBtns.forEach((b) => b.classList.remove('active'));
-            // 添加 active 状态到当前按钮
             btn.classList.add('active');
 
-            // 获取屏幕元素
-            const screen = document.querySelector('.teleprompter-screen');
+            const screen = document.getElementById('teleprompter-screen');
             if (!screen) return;
 
-            // 移除所有背景色类
             screen.classList.remove('bg-black', 'bg-white', 'bg-green', 'bg-blue');
 
-            // 添加新的背景色类
             const color = btn.dataset.color;
             switch (color) {
-                case 'black':
-                    screen.classList.add('bg-black');
-                    break;
-                case 'white':
-                    screen.classList.add('bg-white');
-                    break;
-                case 'green':
-                    screen.classList.add('bg-green');
-                    break;
-                case 'blue':
-                    screen.classList.add('bg-blue');
-                    break;
+                case 'black': screen.classList.add('bg-black'); break;
+                case 'white': screen.classList.add('bg-white'); break;
+                case 'green': screen.classList.add('bg-green'); break;
+                case 'blue': screen.classList.add('bg-blue'); break;
             }
         });
     });
-}
-
-// ==================== 工具函数 ====================
-/**
- * 防抖函数
- * @param {Function} func - 要防抖的函数
- * @param {number} wait - 等待时间（毫秒）
- */
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
 }

@@ -3,396 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>运营工具箱 - Operator-Toolkit-Web</title>
-    <!-- 引入样式文件 -->
+    <title>运营工具箱</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- ==================== 页眉 ==================== -->
-    <header class="site-header">
-        <div class="container">
-            <h1 class="logo">运营工具箱</h1>
-            <p class="tagline">高效运营，从这里开始</p>
+
+    <!-- ==================== 登录页面 ==================== -->
+    <section id="login-page" class="page">
+        <div class="login-container">
+            <div class="login-header">
+                <h1 class="login-title">运营工具箱</h1>
+                <p class="login-subtitle">高效运营，从这里开始</p>
+            </div>
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-account">账号</label>
+                    <input type="text" id="login-account" class="form-input" placeholder="请输入账号" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">密码</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-login">登录</button>
+            </form>
+            <p class="login-hint">默认账号：admin，密码：admin</p>
         </div>
-    </header>
+    </section>
 
-    <!-- ==================== 主内容区 ==================== -->
-    <main class="container">
+    <!-- ==================== 主页面 ==================== -->
+    <section id="main-page" class="page" style="display: none;">
+        <!-- 顶部导航栏 -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="app-logo">
+                    <span class="logo-icon">🧰</span>
+                    <span class="logo-text">运营工具箱</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <h1 class="page-title" id="current-page-title">AI 消除</h1>
+            </div>
+            <div class="header-right">
+                <div class="header-user" id="header-user-info">
+                    <span class="user-avatar">👤</span>
+                    <span class="user-name" id="display-username">用户名</span>
+                </div>
+                <button class="btn btn-logout" id="btn-logout">退出</button>
+            </div>
+        </header>
 
-        <!-- ==================== 模块1：素材卡审词审核 ==================== -->
-        <section class="module-card" id="module-review">
-            <div class="module-header">
-                <h2 class="module-title">素材卡审词审核</h2>
-                <p class="module-desc">快速审核图片素材或文案中的敏感词、违规词，避免发布后违规</p>
-            </div>
-            <div class="module-body">
-                <!-- 文本输入区 -->
-                <div class="form-group">
-                    <label for="review-text">文案内容</label>
-                    <textarea id="review-text" class="textarea-input" rows="4" placeholder="在此输入待审核的文案内容..."></textarea>
-                </div>
-                <!-- 图片上传区 -->
-                <div class="form-group">
-                    <label>图片素材上传</label>
-                    <div class="upload-zone" id="review-upload-zone">
-                        <div class="upload-placeholder">
-                            <span class="upload-icon">📁</span>
-                            <p>拖拽图片到此处，或 <span class="upload-link">点击上传</span></p>
-                            <p class="upload-hint">支持 JPG、PNG、GIF 格式</p>
-                        </div>
-                        <div class="upload-preview" style="display: none;">
-                            <img id="review-preview-img" src="" alt="预览图">
-                            <span class="upload-file-name"></span>
-                            <button type="button" class="btn-remove">×</button>
-                        </div>
-                    </div>
-                    <input type="file" id="review-file-input" accept="image/*" hidden>
-                </div>
-                <!-- 按钮区 -->
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-action="review">开始审核</button>
-                </div>
-                <!-- 结果展示区 -->
-                <div class="result-zone">
-                    <h3 class="result-title">审核结果</h3>
-                    <div class="result-placeholder">
-                        <p>审核结果将在此处显示</p>
-                        <p class="result-hint">敏感词高亮、数量统计</p>
-                    </div>
-                </div>
-                <!-- 未来集成说明 -->
-                <p class="future-note">
-                    <span class="note-icon">💡</span>
-                    未来将比对千川极限词，并调用 Minimax API 进行深度审核
-                </p>
-            </div>
-        </section>
+        <!-- 主内容区 - 左右分栏 -->
+        <main class="main-content">
+            <!-- 左侧主操作区 -->
+            <div class="content-area">
 
-        <!-- ==================== 模块2：去水印视频系统 ==================== -->
-        <section class="module-card" id="module-watermark">
-            <div class="module-header">
-                <h2 class="module-title">去水印视频系统</h2>
-                <p class="module-desc">上传带有水印/Logo 的视频文件，自动去除水印区域</p>
-            </div>
-            <div class="module-body">
-                <!-- 视频上传区 -->
-                <div class="form-group">
-                    <label>视频文件上传</label>
-                    <div class="upload-zone video-upload" id="watermark-upload-zone">
-                        <div class="upload-placeholder">
-                            <span class="upload-icon">🎬</span>
-                            <p>拖拽视频到此处，或 <span class="upload-link">点击上传</span></p>
-                            <p class="upload-hint">支持 MP4、MOV、AVI 格式</p>
+                <!-- ========== 模块1：素材卡审词审核 ========== -->
+                <section class="module-section" id="section-review" data-title="素材卡审词审核">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">素材卡审词审核</h2>
                         </div>
-                        <div class="upload-preview" style="display: none;">
-                            <video id="watermark-preview-video" controls></video>
-                            <span class="upload-file-name"></span>
-                            <button type="button" class="btn-remove">×</button>
-                        </div>
-                    </div>
-                    <input type="file" id="watermark-file-input" accept="video/*" hidden>
-                </div>
-                <!-- 水印位置选择 -->
-                <div class="form-group">
-                    <label>水印位置</label>
-                    <div class="position-selector">
-                        <button type="button" class="position-btn active" data-position="top-left">左上</button>
-                        <button type="button" class="position-btn" data-position="top-right">右上</button>
-                        <button type="button" class="position-btn" data-position="bottom-left">左下</button>
-                        <button type="button" class="position-btn" data-position="bottom-right">右下</button>
-                        <button type="button" class="position-btn" data-position="custom">自定义</button>
-                    </div>
-                </div>
-                <!-- 自定义坐标 -->
-                <div class="form-group custom-coords" style="display: none;">
-                    <label>自定义水印区域</label>
-                    <div class="coord-inputs">
-                        <input type="number" class="coord-input" placeholder="X" min="0">
-                        <input type="number" class="coord-input" placeholder="Y" min="0">
-                        <input type="number" class="coord-input" placeholder="宽度" min="1">
-                        <input type="number" class="coord-input" placeholder="高度" min="1">
-                    </div>
-                </div>
-                <!-- 视频信息 -->
-                <div class="video-info" style="display: none;">
-                    <span class="info-item">时长: <strong id="video-duration">--</strong></span>
-                    <span class="info-item">分辨率: <strong id="video-resolution">--</strong></span>
-                </div>
-                <!-- 按钮区 -->
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-action="watermark-process">开始处理</button>
-                    <button type="button" class="btn btn-secondary" data-action="watermark-download">下载原视频</button>
-                </div>
-                <!-- 进度条 -->
-                <div class="progress-zone">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%;"></div>
-                    </div>
-                    <span class="progress-text">处理进度: 0%</span>
-                </div>
-                <!-- 结果展示区 -->
-                <div class="result-zone">
-                    <h3 class="result-title">处理结果</h3>
-                    <div class="result-placeholder">
-                        <p>处理后的视频将在此处预览</p>
-                    </div>
-                </div>
-                <!-- 未来集成说明 -->
-                <p class="future-note">
-                    <span class="note-icon">💡</span>
-                    未来将使用 Minimax-2.7 API 进行 AI 水印检测与去除
-                </p>
-            </div>
-        </section>
-
-        <!-- ==================== 模块3：视频提取文案系统 ==================== -->
-        <section class="module-card" id="module-extract">
-            <div class="module-header">
-                <h2 class="module-title">视频提取文案系统</h2>
-                <p class="module-desc">从视频中自动识别并提取语音内容，输出可编辑的文案文本</p>
-            </div>
-            <div class="module-body">
-                <!-- 视频上传区 -->
-                <div class="form-group">
-                    <label>视频文件上传</label>
-                    <div class="upload-zone video-upload" id="extract-upload-zone">
-                        <div class="upload-placeholder">
-                            <span class="upload-icon">🎬</span>
-                            <p>拖拽视频到此处，或 <span class="upload-link">点击上传</span></p>
-                            <p class="upload-hint">支持 MP4、MOV、WebM 格式</p>
-                        </div>
-                        <div class="upload-preview" style="display: none;">
-                            <video id="extract-preview-video" controls></video>
-                            <span class="upload-file-name"></span>
-                            <button type="button" class="btn-remove">×</button>
-                        </div>
-                    </div>
-                    <input type="file" id="extract-file-input" accept="video/*" hidden>
-                </div>
-                <!-- 语种选择 -->
-                <div class="form-group">
-                    <label for="language-select">视频语种</label>
-                    <select id="language-select" class="select-input">
-                        <option value="zh">中文</option>
-                        <option value="en">英文</option>
-                        <option value="zh-en">中文+英文</option>
-                        <option value="auto">自动识别</option>
-                    </select>
-                </div>
-                <!-- 按钮区 -->
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-action="extract">开始提取</button>
-                    <button type="button" class="btn btn-secondary" data-action="extract-preview">试听原文</button>
-                </div>
-                <!-- 结果展示区 -->
-                <div class="result-zone">
-                    <h3 class="result-title">提取结果 <span class="timestamp-badge">带时间戳</span></h3>
-                    <div class="result-placeholder result-text">
-                        <p>提取的文案内容将在此处显示</p>
-                        <p class="result-hint">每段文字对应视频中的时间点</p>
-                    </div>
-                </div>
-                <!-- 导出按钮 -->
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline" data-action="export-txt">导出 TXT</button>
-                    <button type="button" class="btn btn-outline" data-action="export-word">导出 Word</button>
-                </div>
-                <!-- 未来集成说明 -->
-                <p class="future-note">
-                    <span class="note-icon">💡</span>
-                    未来将调用 Minimax-2.7 语音识别 API 进行视频语音转文字
-                </p>
-            </div>
-        </section>
-
-        <!-- ==================== 模块4：题词系统 ==================== -->
-        <section class="module-card" id="module-teleprompter">
-            <div class="module-header">
-                <h2 class="module-title">题词系统</h2>
-                <p class="module-desc">为视频拍摄/直播提供提词器功能，台词自动滚动，演讲更流畅</p>
-            </div>
-            <div class="module-body">
-                <!-- 文案输入区 -->
-                <div class="form-group">
-                    <label for="teleprompter-script">台词脚本</label>
-                    <textarea id="teleprompter-script" class="textarea-input" rows="6" placeholder="在此输入完整台词/脚本..."></textarea>
-                </div>
-                <!-- 提词预览区 -->
-                <div class="teleprompter-preview">
-                    <div class="teleprompter-screen" id="teleprompter-screen">
-                        <p class="teleprompter-text">提词内容将在此滚动显示</p>
-                    </div>
-                </div>
-                <!-- 控制面板 -->
-                <div class="control-panel">
-                    <div class="control-group">
-                        <label>字体大小</label>
-                        <input type="range" class="range-input" id="font-size-control" min="24" max="72" value="36">
-                        <span class="range-value">36px</span>
-                    </div>
-                    <div class="control-group">
-                        <label>滚动速度</label>
-                        <input type="range" class="range-input" id="speed-control" min="1" max="10" value="5">
-                        <span class="range-value">5</span>
-                    </div>
-                    <div class="control-group">
-                        <label>背景颜色</label>
-                        <div class="color-picker">
-                            <button type="button" class="color-btn active" data-color="black" style="background: #000;"></button>
-                            <button type="button" class="color-btn" data-color="white" style="background: #fff;"></button>
-                            <button type="button" class="color-btn" data-color="green" style="background: #22c55e;"></button>
-                            <button type="button" class="color-btn" data-color="blue" style="background: #3b82f6;"></button>
-                        </div>
-                    </div>
-                </div>
-                <!-- 按钮区 -->
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-action="teleprompter-play">▶ 播放</button>
-                    <button type="button" class="btn btn-secondary" data-action="teleprompter-pause">⏸ 暂停</button>
-                    <button type="button" class="btn btn-secondary" data-action="teleprompter-reset">🔄 重置</button>
-                    <button type="button" class="btn btn-outline" data-action="teleprompter-fullscreen">⛶ 全屏</button>
-                </div>
-                <!-- 未来集成说明 -->
-                <p class="future-note">
-                    <span class="note-icon">💡</span>
-                    未来将基于 Minimax-2.7 TTS API 实现语音驱动的智能滚动
-                </p>
-            </div>
-        </section>
-
-        <!-- ==================== 模块5：素材脚本分镜拆解系统 ==================== -->
-        <section class="module-card" id="module-storyboard">
-            <div class="module-header">
-                <h2 class="module-title">素材脚本分镜拆解系统</h2>
-                <p class="module-desc">输入素材脚本，自动拆解为独立分镜，便于拍摄团队执行</p>
-            </div>
-            <div class="module-body">
-                <!-- 脚本输入区 -->
-                <div class="form-group">
-                    <label for="storyboard-script">素材脚本</label>
-                    <textarea id="storyboard-script" class="textarea-input" rows="6" placeholder="在此粘贴完整脚本内容..."></textarea>
-                </div>
-                <!-- 分镜数量设置 -->
-                <div class="form-group">
-                    <label for="scene-count">期望分镜数量</label>
-                    <div class="scene-count-control">
-                        <input type="range" class="range-input" id="scene-count" min="3" max="20" value="6">
-                        <span class="range-value" id="scene-count-value">6</span>
-                    </div>
-                </div>
-                <!-- 按钮区 -->
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-action="storyboard-split">智能拆解</button>
-                </div>
-                <!-- 分镜列表 -->
-                <div class="storyboard-list">
-                    <h3 class="result-title">分镜列表</h3>
-                    <div class="scene-cards">
-                        <!-- 静态占位：实际分镜卡片将由后端生成 -->
-                        <div class="scene-card">
-                            <div class="scene-number">#1</div>
-                            <div class="scene-content">
-                                <div class="scene-field">
-                                    <label>场景</label>
-                                    <span>室内 / 办公室</span>
+                        <div class="card-body">
+                            <div class="main-preview">
+                                <div class="preview-zone">
+                                    <div class="preview-placeholder" id="review-preview-zone">
+                                        <textarea id="review-text" class="textarea-input preview-textarea" rows="6" placeholder="在此输入待审核的文案内容..."></textarea>
+                                    </div>
                                 </div>
-                                <div class="scene-field">
-                                    <label>镜头角度</label>
-                                    <span>中景平视</span>
-                                </div>
-                                <div class="scene-field">
-                                    <label>人物动作</label>
-                                    <span>坐在工位前</span>
-                                </div>
-                                <div class="scene-field">
-                                    <label>台词</label>
-                                    <span>"今天给大家介绍..."</span>
-                                </div>
-                                <div class="scene-field">
-                                    <label>预估时长</label>
-                                    <span>5秒</span>
+                                <div class="upload-section">
+                                    <label class="form-label">上传图片素材</label>
+                                    <div class="upload-zone" id="review-upload-zone">
+                                        <div class="upload-placeholder">
+                                            <span class="upload-icon">📁</span>
+                                            <p class="upload-text">点击或拖拽上传图片</p>
+                                            <p class="upload-hint">支持 JPG、PNG、GIF</p>
+                                        </div>
+                                        <div class="upload-preview" style="display: none;">
+                                            <img id="review-preview-img" src="" alt="预览">
+                                            <button type="button" class="btn-remove">×</button>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="review-file-input" accept="image/*" hidden>
                                 </div>
                             </div>
-                            <button type="button" class="btn-edit" data-action="edit-scene">编辑</button>
-                        </div>
-                        <div class="scene-card">
-                            <div class="scene-number">#2</div>
-                            <div class="scene-content">
-                                <div class="scene-field">
-                                    <label>场景</label>
-                                    <span>室内 / 会议室</span>
-                                </div>
-                                <div class="scene-field">
-                                    <label>镜头角度</label>
-                                    <span>近景特写</span>
-                                </div>
-                                <div class="scene-field">
-                                    <label>人物动作</label>
-                                    <span>手拿产品展示</span>
-                                </div>
-                                <div class="scene-field">
-                                    <label>台词</label>
-                                    <span>"这是我们的新品..."</span>
-                                </div>
-                                <div class="scene-field">
-                                    <label>预估时长</label>
-                                    <span>8秒</span>
+                            <!-- 结果展示 -->
+                            <div class="result-section">
+                                <h3 class="result-title">审核结果</h3>
+                                <div class="result-box">
+                                    <div class="result-placeholder">
+                                        <p>审核结果将在此处显示</p>
+                                        <p class="result-hint">敏感词高亮、数量统计</p>
+                                    </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn-edit" data-action="edit-scene">编辑</button>
                         </div>
-                        <div class="scene-card">
-                            <div class="scene-number">#3</div>
-                            <div class="scene-content">
-                                <div class="scene-field">
-                                    <label>场景</label>
-                                    <span>室外 / 街头</span>
+                        <div class="card-footer">
+                            <p class="future-note">
+                                <span class="note-icon">💡</span>
+                                未来将比对千川极限词，并调用 Minimax API 进行深度审核
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== 模块2：去水印视频系统 ========== -->
+                <section class="module-section" id="section-watermark" data-title="AI 消除">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">去水印视频系统</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="main-preview">
+                                <div class="preview-zone">
+                                    <div class="preview-placeholder" id="watermark-preview-zone">
+                                        <div class="preview-empty">
+                                            <span class="preview-icon">🎬</span>
+                                            <p>上传视频后在此预览</p>
+                                        </div>
+                                        <video id="watermark-preview-video" controls style="display: none;"></video>
+                                    </div>
                                 </div>
-                                <div class="scene-field">
-                                    <label>镜头角度</label>
-                                    <span>全景推近</span>
+                                <!-- 右侧边栏 -->
+                                <aside class="sidebar">
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">消除模式</h3>
+                                        <div class="mode-options">
+                                            <label class="mode-option">
+                                                <input type="radio" name="watermark-mode" value="auto" checked>
+                                                <span class="mode-radio"></span>
+                                                <span class="mode-label">智能识别</span>
+                                            </label>
+                                            <label class="mode-option">
+                                                <input type="radio" name="watermark-mode" value="manual">
+                                                <span class="mode-radio"></span>
+                                                <span class="mode-label">手动框选</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">水印位置</h3>
+                                        <div class="position-grid">
+                                            <button type="button" class="position-btn active" data-pos="tl">左上</button>
+                                            <button type="button" class="position-btn" data-pos="tr">右上</button>
+                                            <button type="button" class="position-btn" data-pos="bl">左下</button>
+                                            <button type="button" class="position-btn" data-pos="br">右下</button>
+                                        </div>
+                                    </div>
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">处理参数</h3>
+                                        <div class="param-item">
+                                            <label>强度</label>
+                                            <input type="range" class="range-input" min="1" max="10" value="5">
+                                            <span class="range-value">5</span>
+                                        </div>
+                                    </div>
+                                </aside>
+                            </div>
+                            <!-- 上传区 -->
+                            <div class="upload-section">
+                                <label class="form-label">上传视频</label>
+                                <div class="upload-zone" id="watermark-upload-zone">
+                                    <div class="upload-placeholder">
+                                        <span class="upload-icon">🎬</span>
+                                        <p class="upload-text">点击或拖拽上传视频</p>
+                                        <p class="upload-hint">支持 MP4、MOV、AVI</p>
+                                    </div>
+                                    <div class="upload-preview" style="display: none;">
+                                        <span class="upload-file-name"></span>
+                                        <button type="button" class="btn-remove">×</button>
+                                    </div>
                                 </div>
-                                <div class="scene-field">
-                                    <label>人物动作</label>
-                                    <span>行走中转身</span>
+                                <input type="file" id="watermark-file-input" accept="video/*" hidden>
+                            </div>
+                            <!-- 视频信息 -->
+                            <div class="video-info" style="display: none;">
+                                <span>时长: <strong id="video-duration">--</strong></span>
+                                <span>分辨率: <strong id="video-resolution">--</strong></span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary btn-large" data-action="watermark-process">
+                                <span class="btn-icon">⚡</span> 开始处理
+                            </button>
+                            <button class="btn btn-secondary" data-action="watermark-download">下载原视频</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== 模块3：视频提取文案系统 ========== -->
+                <section class="module-section" id="section-extract" data-title="视频转文案">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">视频提取文案系统</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="main-preview">
+                                <div class="preview-zone">
+                                    <div class="preview-placeholder" id="extract-preview-zone">
+                                        <div class="preview-empty">
+                                            <span class="preview-icon">🎬</span>
+                                            <p>上传视频后在此预览</p>
+                                        </div>
+                                        <video id="extract-preview-video" controls style="display: none;"></video>
+                                    </div>
                                 </div>
-                                <div class="scene-field">
-                                    <label>台词</label>
-                                    <span>"让我们看看..."</span>
+                                <!-- 右侧边栏 -->
+                                <aside class="sidebar">
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">视频语种</h3>
+                                        <select id="language-select" class="select-input">
+                                            <option value="zh">中文</option>
+                                            <option value="en">英文</option>
+                                            <option value="zh-en">中文+英文</option>
+                                            <option value="auto">自动识别</option>
+                                        </select>
+                                    </div>
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">输出格式</h3>
+                                        <div class="mode-options">
+                                            <label class="mode-option">
+                                                <input type="radio" name="output-format" value="txt" checked>
+                                                <span class="mode-radio"></span>
+                                                <span class="mode-label">纯文本</span>
+                                            </label>
+                                            <label class="mode-option">
+                                                <input type="radio" name="output-format" value="srt">
+                                                <span class="mode-radio"></span>
+                                                <span class="mode-label">带时间轴 (SRT)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </aside>
+                            </div>
+                            <!-- 上传区 -->
+                            <div class="upload-section">
+                                <label class="form-label">上传视频</label>
+                                <div class="upload-zone" id="extract-upload-zone">
+                                    <div class="upload-placeholder">
+                                        <span class="upload-icon">🎬</span>
+                                        <p class="upload-text">点击或拖拽上传视频</p>
+                                        <p class="upload-hint">支持 MP4、MOV、WebM</p>
+                                    </div>
+                                    <div class="upload-preview" style="display: none;">
+                                        <span class="upload-file-name"></span>
+                                        <button type="button" class="btn-remove">×</button>
+                                    </div>
                                 </div>
-                                <div class="scene-field">
-                                    <label>预估时长</label>
-                                    <span>6秒</span>
+                                <input type="file" id="extract-file-input" accept="video/*" hidden>
+                            </div>
+                            <!-- 结果展示 -->
+                            <div class="result-section">
+                                <h3 class="result-title">提取结果 <span class="timestamp-badge">带时间戳</span></h3>
+                                <div class="result-box">
+                                    <div class="result-placeholder">
+                                        <p>提取的文案内容将在此处显示</p>
+                                        <p class="result-hint">每段文字对应视频中的时间点</p>
+                                    </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn-edit" data-action="edit-scene">编辑</button>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary btn-large" data-action="extract">
+                                <span class="btn-icon">▶</span> 开始提取
+                            </button>
+                            <button class="btn btn-secondary" data-action="extract-preview">试听原文</button>
+                            <button class="btn btn-outline" data-action="export-txt">导出 TXT</button>
+                            <button class="btn btn-outline" data-action="export-word">导出 Word</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== 模块4：题词系统 ========== -->
+                <section class="module-section" id="section-teleprompter" data-title="题词器">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">题词系统</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="main-preview">
+                                <div class="preview-zone teleprompter-zone">
+                                    <div class="teleprompter-screen" id="teleprompter-screen">
+                                        <p class="teleprompter-text">提词内容将在此滚动显示</p>
+                                    </div>
+                                </div>
+                                <!-- 右侧边栏 -->
+                                <aside class="sidebar">
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">显示设置</h3>
+                                        <div class="param-item">
+                                            <label>字体大小</label>
+                                            <input type="range" class="range-input" id="font-size-control" min="24" max="72" value="36">
+                                            <span class="range-value" id="font-size-value">36px</span>
+                                        </div>
+                                        <div class="param-item">
+                                            <label>滚动速度</label>
+                                            <input type="range" class="range-input" id="speed-control" min="1" max="10" value="5">
+                                            <span class="range-value" id="speed-value">5</span>
+                                        </div>
+                                    </div>
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">背景颜色</h3>
+                                        <div class="color-picker">
+                                            <button type="button" class="color-btn active" data-color="black" style="background:#000;"></button>
+                                            <button type="button" class="color-btn" data-color="white" style="background:#fff;"></button>
+                                            <button type="button" class="color-btn" data-color="green" style="background:#22c55e;"></button>
+                                            <button type="button" class="color-btn" data-color="blue" style="background:#3b82f6;"></button>
+                                        </div>
+                                    </div>
+                                </aside>
+                            </div>
+                            <!-- 脚本输入 -->
+                            <div class="upload-section">
+                                <label class="form-label">台词脚本</label>
+                                <textarea id="teleprompter-script" class="textarea-input" rows="5" placeholder="在此输入完整台词/脚本..."></textarea>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" data-action="teleprompter-play">
+                                <span class="btn-icon">▶</span> 播放
+                            </button>
+                            <button class="btn btn-secondary" data-action="teleprompter-pause">
+                                <span class="btn-icon">⏸</span> 暂停
+                            </button>
+                            <button class="btn btn-secondary" data-action="teleprompter-reset">
+                                <span class="btn-icon">🔄</span> 重置
+                            </button>
+                            <button class="btn btn-outline" data-action="teleprompter-fullscreen">
+                                <span class="btn-icon">⛶</span> 全屏
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========== 模块5：素材脚本分镜拆解系统 ========== -->
+                <section class="module-section" id="section-storyboard" data-title="分镜拆解">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">素材脚本分镜拆解</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="main-preview">
+                                <div class="preview-zone">
+                                    <div class="preview-placeholder">
+                                        <textarea id="storyboard-script" class="textarea-input preview-textarea" rows="8" placeholder="在此粘贴完整脚本内容..."></textarea>
+                                    </div>
+                                </div>
+                                <!-- 右侧边栏 -->
+                                <aside class="sidebar">
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">分镜数量</h3>
+                                        <div class="param-item">
+                                            <input type="range" class="range-input" id="scene-count" min="3" max="20" value="6">
+                                            <span class="range-value" id="scene-count-value">6</span>
+                                        </div>
+                                    </div>
+                                    <div class="sidebar-section">
+                                        <h3 class="sidebar-title">输出格式</h3>
+                                        <div class="mode-options">
+                                            <label class="mode-option">
+                                                <input type="radio" name="storyboard-format" value="table" checked>
+                                                <span class="mode-radio"></span>
+                                                <span class="mode-label">表格形式</span>
+                                            </label>
+                                            <label class="mode-option">
+                                                <input type="radio" name="storyboard-format" value="card">
+                                                <span class="mode-radio"></span>
+                                                <span class="mode-label">卡片形式</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </aside>
+                            </div>
+                            <!-- 分镜列表 -->
+                            <div class="result-section">
+                                <h3 class="result-title">分镜列表</h3>
+                                <div class="scene-cards">
+                                    <div class="scene-card">
+                                        <div class="scene-number">#1</div>
+                                        <div class="scene-content">
+                                            <div class="scene-field"><label>场景</label><span>室内/办公室</span></div>
+                                            <div class="scene-field"><label>镜头</label><span>中景平视</span></div>
+                                            <div class="scene-field"><label>动作</label><span>坐在工位前</span></div>
+                                            <div class="scene-field"><label>台词</label><span>"今天给大家介绍..."</span></div>
+                                            <div class="scene-field"><label>时长</label><span>5秒</span></div>
+                                        </div>
+                                        <button class="btn-edit" data-action="edit-scene">编辑</button>
+                                    </div>
+                                    <div class="scene-card">
+                                        <div class="scene-number">#2</div>
+                                        <div class="scene-content">
+                                            <div class="scene-field"><label>场景</label><span>室内/会议室</span></div>
+                                            <div class="scene-field"><label>镜头</label><span>近景特写</span></div>
+                                            <div class="scene-field"><label>动作</label><span>手拿产品展示</span></div>
+                                            <div class="scene-field"><label>台词</label><span>"这是我们的新品..."</span></div>
+                                            <div class="scene-field"><label>时长</label><span>8秒</span></div>
+                                        </div>
+                                        <button class="btn-edit" data-action="edit-scene">编辑</button>
+                                    </div>
+                                    <div class="scene-card">
+                                        <div class="scene-number">#3</div>
+                                        <div class="scene-content">
+                                            <div class="scene-field"><label>场景</label><span>室外/街头</span></div>
+                                            <div class="scene-field"><label>镜头</label><span>全景推近</span></div>
+                                            <div class="scene-field"><label>动作</label><span>行走中转身</span></div>
+                                            <div class="scene-field"><label>台词</label><span>"让我们看看..."</span></div>
+                                            <div class="scene-field"><label>时长</label><span>6秒</span></div>
+                                        </div>
+                                        <button class="btn-edit" data-action="edit-scene">编辑</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary btn-large" data-action="storyboard-split">
+                                <span class="btn-icon">✨</span> 智能拆解
+                            </button>
+                            <button class="btn btn-outline" data-action="export-pdf">
+                                <span class="btn-icon">📄</span> 导出 PDF
+                            </button>
+                            <button class="btn btn-outline" data-action="export-excel">
+                                <span class="btn-icon">📊</span> 导出 Excel
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 如何使用指导区 -->
+                <div class="help-section">
+                    <h3 class="help-title">如何使用</h3>
+                    <div class="help-steps">
+                        <div class="help-step">
+                            <span class="step-num">1</span>
+                            <span class="step-text">上传图片或视频素材</span>
+                        </div>
+                        <div class="help-step">
+                            <span class="step-num">2</span>
+                            <span class="step-text">选择处理模式或输入参数</span>
+                        </div>
+                        <div class="help-step">
+                            <span class="step-num">3</span>
+                            <span class="step-text">点击开始处理</span>
+                        </div>
+                        <div class="help-step">
+                            <span class="step-num">4</span>
+                            <span class="step-text">下载处理结果</span>
                         </div>
                     </div>
                 </div>
-                <!-- 导出按钮 -->
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline" data-action="export-pdf">导出 PDF</button>
-                    <button type="button" class="btn btn-outline" data-action="export-excel">导出 Excel</button>
-                </div>
-                <!-- 未来集成说明 -->
-                <p class="future-note">
-                    <span class="note-icon">💡</span>
-                    未来将调用 Minimax-2.7 NLP API 进行脚本语义分析与分镜拆解
-                </p>
             </div>
-        </section>
 
-    </main>
+            <!-- 右侧功能切换栏 -->
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-title">工具</span>
+                    <button class="nav-item active" data-section="review">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">审词审核</span>
+                    </button>
+                    <button class="nav-item" data-section="watermark">
+                        <span class="nav-icon">🎬</span>
+                        <span class="nav-text">AI 消除</span>
+                    </button>
+                    <button class="nav-item" data-section="extract">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">视频转文案</span>
+                    </button>
+                    <button class="nav-item" data-section="teleprompter">
+                        <span class="nav-icon">📜</span>
+                        <span class="nav-text">题词器</span>
+                    </button>
+                    <button class="nav-item" data-section="storyboard">
+                        <span class="nav-icon">🎞️</span>
+                        <span class="nav-text">分镜拆解</span>
+                    </button>
+                </div>
+            </nav>
+        </main>
+    </section>
 
-    <!-- ==================== 页脚 ==================== -->
-    <footer class="site-footer">
-        <div class="container">
-            <p>运营工具箱网页模板 v1.0 - 纯前端演示版本</p>
-            <p class="footer-note">所有功能待后端实现</p>
-        </div>
-    </footer>
-
-    <!-- 引入脚本文件 -->
     <script src="script.js"></script>
 </body>
 </html>
